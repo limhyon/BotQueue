@@ -22,10 +22,10 @@
 					<td><?=$j->id?></td>
 					<td><?=$j->getLink()?></td>
 					<td><?=$j->getStatusHTML()?></td>
-					<td><?=$j->getElapsedText()?></td>
-					<td><?=$j->getEstimatedText()?></td>
+					<td class="muted"><?=$j->getElapsedText()?></td>
+					<td class="muted"><?=$j->getEstimatedText()?></td>
 					<td align="right" style="width: 300px">
-						<div class="progress progress-striped">
+						<div class="progress progress-striped <?=($j->get('status') == 'working') ? 'active' : ''?>">
 						  <div class="bar" style="width: <?=round($j->get('progress'))?>%;"></div>
 						</div>
 					</td>
@@ -38,7 +38,7 @@
 						<? if ($j->get('status') == 'available'): ?>
 							<a class="btn btn-mini" href="<?=$j->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
 						<? endif ?>
-						<? if ($j->get('status') != 'taken' && $j->get('status') != 'qa' && $j->get('status') != 'downloading'): ?>
+						<? if ($j->get('status') != 'taken' && $j->get('status') != 'qa' && $j->get('status') != 'downloading' && $j->get('status') != 'slicing' ): ?>
 							<a class="btn btn-mini" href="<?=$j->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
 						<? endif ?>
 						<? if ($j->get('status') == 'qa'): ?>
