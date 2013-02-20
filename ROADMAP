@@ -1,57 +1,24 @@
-v2 Release - October 2012
+v2.x Release - Ongoing
 
-* WEB - DEV SITE!
+* WEB - add ability to make comments on individual jobs
 
-* WEB - Slicers + Profiles
-  * support for multiple slice engines, and versions of slice engines
-  * support for multiple different configuration files
-    * can upload config files, or edit online
-  * initially only support slic3r
-
-* WEB - Pull in files from internet (Thingiverse, GrabCAD, etc)
-  * Prereq: slicer support
+* WEB - add name info to app registration
+* WEB - Remove access token for a certain app.
+* WEB - ability to assign each bot to an app.
+* WEB - online editing of bot configs.
 
 * WEB - multi-job prints (eg: .zip file w/ manifest)
-
-* API - implement job creation via URL download
-* API - implement job creation via HTTP file POST
-	* use Poster to send HTTP files: http://atlee.ca/software/poster/
-* API - Add computer name / id to app approval so we can show that on app page... remove access token for a certain computer.
-* API - Add callback url support for web-based apps
-
-* BUMBLEBEE - Better / faster shutdown
-
-* WEB - better client installation documentation
-* WEB - replace all appropriate form controls with new form helper class.
-* WEB - protect sql calls from db injection attacks
-
-------------------------------------------------------------------------------------
-
-v3 Release - Nov 2012
-
-WEBSITE 
-
-* WEB - Single unified queue view w/ auto-update
-  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
-
-* WEB - Allow canceling of print jobs through website.
-  * similar error flow to QA failure
-  * Prereq: websockets server
-
-* WEB - Allow pausing / resuming through website
-
-* WEB - bot current status / mini-dashboard with machine vitals such as temp.
-
-* API - Websockets server
-  * define events to pass to clients
-  * subscribe to bots, jobs, or user?
-  * use autobahn or tornado for python side.
+  * pull in all files from thingiverse.com/thing:####
+* WEB - add source info for jobs added by url.
   
-* CLIENT - support for websockets for realtime comms
+* BUMBLEBEE - pull list of bots + config from web directly
+* BUMBLEBEE - headless app authentication support
+* BUMBLEBEE - add support for dropping jobs mid-print / mid-slice
+* BUMBLEBEE - better interactivity from main menu for controlling bots / stopping jobs / etc.
+* BUMBLEBEE - raspberry pi image & support
+* BUMBLEBEE - temperature reporting
 
-------------------------------------------------------------------------------------
-
-Long term wants:
+v3 - ???
 
 WEBCAM SUPPORT
 
@@ -67,9 +34,48 @@ WEBCAM SUPPORT
     * make sure each image is timestamped.
     * and watermarked with the host url.
 
+v4 Release - ???
+
+WEBSITE 
+
+* WEB - Single unified queue view w/ auto-update
+  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
+
+* WEB - Allow pausing / resuming through website
+
+* WEB - bot current status / mini-dashboard with machine vitals such as temp.
+
+* API - Websockets server
+  * define events to pass to clients
+  * subscribe to bots, jobs, or user?
+  * use autobahn or tornado for python side.
+  
+* CLIENT - support for websockets for realtime comms
+
+* when downloading file to slice, status should be "downloading"
+
+------------------------------------------------------------------------------------
+
+Long term wants:
+
+* WEB - add diff of slicer configs to slicejob page (current vs snapshot)
+
+* add filament_volume field to slicejob or job
+
+* BUMBLEBEE - Better / faster shutdown
+
+* API - Add callback url support for web-based apps
+
+* WEB - print grouping using slic3r
+  * modify jobs to add allow_grouping file
+  * look at job grabbing to allow multiple jobs to be grabbed
+  * look at bumblebee to allow multiple jobs to be grabbed
+  * add option to allow job to be grouped into a single print
+  * modify code to use slic3r --merge to create build plate.
+  * create high-level job group to hold currently running jobs?
+
 * WEB - Reduce Amazon requirements for non-amazon / non-public installs.
 * WEB - Public queue support
-* WEB - Webcam support
 * WEB - full page statistics for bot / queue with graphs
 
 * BUMBLEBEE - new machine discovery
@@ -92,3 +98,4 @@ WEBCAM SUPPORT
 	* Use python+webkit for UI
 * WEB - simple script for installing botqueue onto a standalone ubuntu machine
 * WEB - 100% working Amazon bootup script.
+

@@ -90,7 +90,7 @@
 				$this->setTitle("View Queue - " . $q->getName());
 				$this->set('queue', $q);
 
-				$available = $q->getJobs('available', 'user_sort', 'DESC');
+				$available = $q->getJobs('available', 'user_sort', 'ASC');
 				$this->set('available', $available->getRange(0, 20));
 				$this->set('available_count', $available->count());
 			
@@ -124,7 +124,8 @@
 				$this->set('megaerror', $e->getMessage());
 			}
 		}
-		
+
+    //TODO refactor this function
 		//ajax function
 		public function update_sort()
 		{
@@ -149,7 +150,7 @@
 			}
 			
 			//find our our current max
-			$sql = "SELECT min(user_sort) FROM jobs WHERE id IN (" . implode($jids, ",") . ")";
+			$sql = "SELECT min(user_sort) FROM jobs WHERE id IN (" . mysql_real_escape_string(implode($jids, ",")) . ")";
 			$min = (int)db()->getValue($sql);
 			
 			//now actually update.
@@ -232,6 +233,133 @@
 		public function draw_queues()
 		{
 			$this->setArg('queues');
+		}
+
+		public function edit()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				$queue = new Queue($this->args('id'));
+
+				//did we really get someone?
+				if (!$queue->isHydrated())
+					throw new Exception("Could not find that queue.");
+				if ($queue->get('user_id') != User::$me->id)
+					throw new Exception("You do not own this queue.");
+
+				$this->set('queue', $queue);
+				$this->setTitle('Edit Queue - ' . $queue->getName());
+
+				//load up our form.
+				$form = $this->_createQueueForm($queue);
+				$form->action = $queue->getUrl() . "/edit";
+
+				//handle our form
+				if ($form->checkSubmitAndValidate($this->args()))
+				{
+					$queue->set('name', $form->data('name'));
+					$queue->save();
+
+					Activity::log("edited the queue " . $queue->getLink() . ".");
+					
+					$this->forwardToUrl($queue->getUrl());
+				}
+				
+			  $this->set('form', $form);			
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Edit Queue - Error');
+				$this->set('megaerror', $e->getMessage());
+			}			
+		}
+		
+		public function _createQueueForm($queue)
+		{
+			$form = new Form();
+			
+			$form->add(new TextField(array(
+				'name' => 'name',
+				'label' => 'Name',
+				'help' => 'What is the name of this queue?',
+				'required' => true,
+				'value' => $queue->get('name')
+			)));
+			
+			return $form;
+		}
+		
+		public function delete()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				$queue = new Queue($this->args('id'));
+
+				//did we really get someone?
+				if (!$queue->isHydrated())
+					throw new Exception("Could not find that queue.");
+				if ($queue->get('user_id') != User::$me->id)
+					throw new Exception("You do not own this queue.");
+				if (User::$me->getQueues()->count() == 1)
+				  throw new Exception("You cannot delete your last queue. Create a new one before deleting this one.");
+
+				$this->set('queue', $queue);
+				$this->setTitle('Delete Queue - ' . $queue->getName());
+
+				if ($this->args('submit'))
+				{
+					Activity::log("deleted the queue <strong>" . $queue->getName() . "</strong>.");
+
+					$queue->delete();
+					
+					$this->forwardToUrl("/");
+				}				
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Delete Queue - Error');
+				$this->set('megaerror', $e->getMessage());
+			}			
+		}
+		
+		public function flush()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				$queue = new Queue($this->args('id'));
+
+				//did we really get someone?
+				if (!$queue->isHydrated())
+					throw new Exception("Could not find that queue.");
+				if ($queue->get('user_id') != User::$me->id)
+					throw new Exception("You do not own this queue.");
+
+				$this->set('queue', $queue);
+				$this->setTitle('Empty Queue - ' . $queue->getName());
+
+				if ($this->args('submit'))
+				{
+					Activity::log("emptied the queue <strong>" . $queue->getName() . "</strong>.");
+
+					$queue->flush();
+					
+					$this->forwardToUrl($queue->getUrl());
+				}				
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Empty Queue - Error');
+				$this->set('megaerror', $e->getMessage());
+			}			
 		}
 	}
 ?>

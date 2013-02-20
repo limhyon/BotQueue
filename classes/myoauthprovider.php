@@ -82,7 +82,7 @@
 		
 		/**
 		 * This function check both the timestamp & the nonce
-		 * The timestamp has to be less than 5 minutes ago (this is not oauth protocol so feel free to change that)
+		 * The timestamp has to be less than 30 minutes ago (this is not oauth protocol so feel free to change that)
 		 * And the nonce has to be unknown for this consumer
 		 * Once everything is OK it saves the nonce in the db
 		 * It's called by OAuthCheckRequest()
@@ -90,7 +90,8 @@
 		 */
 		public function checkNonce($provider)
 		{
-			if($this->oauth->timestamp < time() - 5*60)
+		  //give them an hour!
+			if($this->oauth->timestamp < time() - 60*30)
 				return OAUTH_BAD_TIMESTAMP;
 			elseif($this->consumer->hasNonce($provider->nonce,$this->oauth->timestamp))
 				return OAUTH_BAD_NONCE;
